@@ -1,0 +1,199 @@
+[
+    {
+        "id": "7da765d8757eff25",
+        "type": "tab",
+        "label": "Cat",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "aa594bea066314c9",
+        "type": "http in",
+        "z": "7da765d8757eff25",
+        "name": "",
+        "url": "/get_marks",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 360,
+        "y": 280,
+        "wires": [
+            [
+                "85ab040569967675"
+            ]
+        ]
+    },
+    {
+        "id": "d41e0c205f178b8a",
+        "type": "http response",
+        "z": "7da765d8757eff25",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 630,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "85ab040569967675",
+        "type": "json",
+        "z": "7da765d8757eff25",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 530,
+        "y": 420,
+        "wires": [
+            [
+                "ee2eed996993a993",
+                "d41e0c205f178b8a",
+                "84374cf8c4c66a79"
+            ]
+        ]
+    },
+    {
+        "id": "ee2eed996993a993",
+        "type": "debug",
+        "z": "7da765d8757eff25",
+        "name": "debug 17",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 780,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "ccfe9b356abcddc2",
+        "type": "exec",
+        "z": "7da765d8757eff25",
+        "command": "pip3 install awswrangler ",
+        "addpay": "",
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "winHide": false,
+        "oldrc": false,
+        "name": "",
+        "x": 250,
+        "y": 420,
+        "wires": [
+            [
+                "1161b8d43d763aa6"
+            ],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "1161b8d43d763aa6",
+        "type": "debug",
+        "z": "7da765d8757eff25",
+        "name": "debug 167",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 530,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "c9ab07e82bf549aa",
+        "type": "inject",
+        "z": "7da765d8757eff25",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 140,
+        "y": 200,
+        "wires": [
+            [
+                "ccfe9b356abcddc2"
+            ]
+        ]
+    },
+    {
+        "id": "84374cf8c4c66a79",
+        "type": "python-function",
+        "z": "7da765d8757eff25",
+        "name": "",
+        "func": "import awswrangler as wr\nimport pandas as pd\nimport boto3\nimport json\n\nboto3.setup_default_session(region_name=\"eu-west-1\")\n\nclient = wr.opensearch.connect(host=<hosyname>,\n                               username=<username>, password=<password>)\n\ndf = pd.read_json(msg['payload'])\n\nwr.opensearch.index_df(\n    client=client,\n    df=df,\n    index='g-cat1' \n)\n\nreturn msg",
+        "outputs": 1,
+        "x": 520,
+        "y": 140,
+        "wires": [
+            [
+                "fb7026a63f08b974"
+            ]
+        ]
+    },
+    {
+        "id": "2fc7cd2bac5860c3",
+        "type": "inject",
+        "z": "7da765d8757eff25",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 200,
+        "y": 100,
+        "wires": [
+            [
+                "84374cf8c4c66a79"
+            ]
+        ]
+    },
+    {
+        "id": "fb7026a63f08b974",
+        "type": "debug",
+        "z": "7da765d8757eff25",
+        "name": "debug 168",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 730,
+        "y": 80,
+        "wires": []
+    }
+]
