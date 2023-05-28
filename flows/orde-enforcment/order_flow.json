@@ -1,0 +1,147 @@
+[
+    {
+        "id": "b321a0c846d99fdc",
+        "type": "tab",
+        "label": "Flow 2",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "5143b449dbbaa397",
+        "type": "websocket in",
+        "z": "b321a0c846d99fdc",
+        "name": "ws-in",
+        "server": "4b9645fddb2d7f21",
+        "client": "",
+        "x": 150,
+        "y": 320,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c1680538e093ea47",
+        "type": "http in",
+        "z": "b321a0c846d99fdc",
+        "name": "",
+        "url": "/check_order",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 190,
+        "y": 400,
+        "wires": [
+            [
+                "YourNode1ID"
+            ]
+        ]
+    },
+    {
+        "id": "YourNode1ID",
+        "type": "function",
+        "z": "b321a0c846d99fdc",
+        "name": "Find missing rows",
+        "func": "context.receivedRows = context.receivedRows || [];\n\nlet row = Number(msg.payload.row);\n\nif (row === -1) {\n    context.receivedRows = [];\n} else {\n    context.receivedRows.push(row);\n    context.receivedRows.sort((a, b) => a - b);\n\n    let missingRows = [];\n    let lastRow = 0;\n\n    for (let i = 0; i < context.receivedRows.length; i++) {\n        let currentRow = context.receivedRows[i];\n\n        while (lastRow + 1 < currentRow) {\n            lastRow++;\n            missingRows.push(lastRow);\n        }\n\n        lastRow = currentRow;\n    }\n\n    if (missingRows.length > 0) {\n        msg.payload = { line: missingRows };\n        return msg;\n    }\n    else {\n        msg.payload = 'OK';\n    }\n}\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 450,
+        "y": 400,
+        "wires": [
+            [
+                "9f13d287fbab784f"
+            ]
+        ]
+    },
+    {
+        "id": "YourNode2ID",
+        "type": "websocket out",
+        "z": "b321a0c846d99fdc",
+        "name": "Send to websocket",
+        "server": "4b9645fddb2d7f21",
+        "client": "",
+        "x": 890,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "9f13d287fbab784f",
+        "type": "switch",
+        "z": "b321a0c846d99fdc",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "neq",
+                "v": "OK",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 650,
+        "y": 400,
+        "wires": [
+            [
+                "YourNode2ID",
+                "212aa76fa92f606b"
+            ]
+        ]
+    },
+    {
+        "id": "212aa76fa92f606b",
+        "type": "debug",
+        "z": "b321a0c846d99fdc",
+        "name": "debug 5",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 860,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "dc27d9adaad0eb3f",
+        "type": "inject",
+        "z": "b321a0c846d99fdc",
+        "name": "clear 1",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"row\":\"-1\",\"user\":\"\"}",
+        "payloadType": "json",
+        "x": 150,
+        "y": 480,
+        "wires": [
+            [
+                "YourNode1ID"
+            ]
+        ]
+    },
+    {
+        "id": "4b9645fddb2d7f21",
+        "type": "websocket-listener",
+        "path": "/ws/g_list",
+        "wholemsg": "false"
+    }
+]
