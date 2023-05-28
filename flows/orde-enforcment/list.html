@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .row {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid black;
+        }
+        .green {
+            background-color: green;
+        }
+        .yellow {
+            background-color: yellow;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    <div id="content">
+        <!-- Rows will be generated here -->
+    </div>
+    <input type="text" id="username" placeholder="Enter username here">
+    <button id="clear">Clear</button>
+
+<script>
+$(document).ready(function(){
+    // Generate 10 rows
+    for (let i = 1; i <= 10; i++) {
+        $("#content").append(`<div id="row-${i}" class="row">Row ${i}</div>`);
+    }
+
+    // Click event handler
+    $(".row").click(function(){
+        let rowId = $(this).attr('id').split('-')[1];
+        
+        // Color row green
+        $(this).addClass('green');
+        
+        let username = $('#username').val();
+        
+        // Send JSON POST request
+        $.ajax({
+            url: 'http://<YOURIP>:1880/check_order',
+            type: 'post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                console.log('Success:', data);
+            },
+            data: JSON.stringify({ row: rowId, user: username })
+        });
+    });
+
+    // Clear button event handler
+    $("#clear").click(function() {
+        $(".row").removeClass("green yellow");
+         // Send JSON POST request
+        $.ajax({
+            url: 'http://<YOURIP>:1880/check_order',
+            type: 'post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                console.log('Success:', data);
+            },
+            data: JSON.stringify({ row: -1, user: username })
+        });
+    });
+
+    // WebSocket connection
+    const socket = new WebSocket('ws://<YOURIP>:1880/ws/g_list');
+    
+    // Connection opened
+    socket.addEventListener('open', (event) => {
+        socket.send('Hello Server!');
+    });
+
+    // Listen for messages
+    socket.addEventListener('message', (event) => {
+        console.log('Message from server:', event.data);
+
+        let eventData = JSON.parse(event.data);
+        if (eventData && eventData.line) {
+            eventData.line.forEach(line => {
+                $(`#row-${line}`).addClass('yellow');
+            });
+        }
+    });
+});
+</script>
+
+</body>
+</html>
