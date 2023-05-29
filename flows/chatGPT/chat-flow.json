@@ -1,0 +1,120 @@
+[
+    {
+        "id": "f5d9ab0c78c0598c",
+        "type": "tab",
+        "label": "Flow 4",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "d8b24295eb8abc03",
+        "type": "python-function",
+        "z": "f5d9ab0c78c0598c",
+        "name": "open-ai",
+        "func": "import openai\nopenai.api_key = '<YOUR-OPENAI-KEY>'\ninput_message = f\"\"\"\nfrom the data between <> create json in the following format:\ntopic, measurement,unit of measure\nthe measurement is float or the token ok or toke  n/ok \nif there is a unit if measure add it to unit of measure \n<>\n{msg['payload']}\n<>\n\"\"\"\n\n\n\nresponse = openai.ChatCompletion.create(\n  model=\"gpt-3.5-turbo\",\n  messages=[\n        {\"role\": \"user\", \"content\": input_message}\n    ]\n)\n\noutput_message = response['choices'][0]['message']['content']\n\nlines = output_message.strip().split(\"\\n\")\nresponse[\"choices\"][0][\"message\"][\"content\"]\nimport json \njson_str = ''.join(lines)\n\n# Remove unnecessary commas\njson_str = json_str.replace(',]', ']')\n\n# Load the string as JSON\nmsg['payload']= json.loads(json_str)\n\n\nreturn msg",
+        "outputs": 1,
+        "x": 460,
+        "y": 100,
+        "wires": [
+            [
+                "82c7f6e3d516816d",
+                "594e8ebb65e1865c"
+            ]
+        ]
+    },
+    {
+        "id": "82c7f6e3d516816d",
+        "type": "debug",
+        "z": "f5d9ab0c78c0598c",
+        "name": "debug 6",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 740,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "747de5de4346e5ab",
+        "type": "inject",
+        "z": "f5d9ab0c78c0598c",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "batery initial reading twelve point eight",
+        "payloadType": "str",
+        "x": 190,
+        "y": 120,
+        "wires": [
+            [
+                "d8b24295eb8abc03"
+            ]
+        ]
+    },
+    {
+        "id": "c69e4bf91f837902",
+        "type": "websocket in",
+        "z": "f5d9ab0c78c0598c",
+        "name": "chatg1",
+        "server": "4b9645fddb2d7f21",
+        "client": "",
+        "x": 250,
+        "y": 320,
+        "wires": [
+            [
+                "d8b24295eb8abc03",
+                "25c93463acb778ea"
+            ]
+        ]
+    },
+    {
+        "id": "594e8ebb65e1865c",
+        "type": "websocket out",
+        "z": "f5d9ab0c78c0598c",
+        "name": "to chatg1",
+        "server": "4b9645fddb2d7f21",
+        "client": "",
+        "x": 680,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "25c93463acb778ea",
+        "type": "debug",
+        "z": "f5d9ab0c78c0598c",
+        "name": "debug 7",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 600,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "4b9645fddb2d7f21",
+        "type": "websocket-listener",
+        "path": "/ws/chatg1",
+        "wholemsg": "false"
+    }
+]
