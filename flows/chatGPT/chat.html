@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>DC-IF</h1>
+<h2>ChatGPT Data Parser</h2>
+
+<p>Interval (in seconds): <input id="interval" type="number" value="30" /></p>
+<p>Message: <textarea id="message" rows="3">Checking GPT ok</textarea></p>
+<p>Response: <textarea id="response" rows="3" disabled></textarea></p>
+
+<button id="sendBtn">Send Message</button>
+
+<script type="text/javascript">
+
+// Create WebSocket connection.
+const socket = new WebSocket('ws://<YOUR-NODE-IP>:1880/ws/chatg1');
+
+// Listen for messages
+socket.addEventListener('message', function (event) {
+    document.getElementById('response').value = ' '+  event.data;
+});
+
+let intervalId = null;
+
+document.getElementById('sendBtn').addEventListener('click', () => {
+    // Send text to server
+    const message = document.getElementById('message').value;
+    socket.send(message);
+    
+    // If there's an existing interval, clear it
+    if (intervalId) {
+        clearInterval(intervalId);
+    }
+
+    // Get the interval from input field
+    const interval = document.getElementById('interval').value;
+    
+    // Start a new interval to send messages
+    intervalId = setInterval(() => {
+        socket.send(message);
+    }, interval * 1000); // Convert seconds to milliseconds
+});
+
+</script>
+
+</body>
+</html>
