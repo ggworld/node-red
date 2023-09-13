@@ -1,0 +1,323 @@
+[
+    {
+        "id": "5db3b5bc7f4d1e87",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "9d4b3531.391338",
+        "type": "inject",
+        "z": "5db3b5bc7f4d1e87",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "",
+        "topic": "",
+        "payload": "/data/Mt_R.xlsx",
+        "payloadType": "str",
+        "x": 180,
+        "y": 200,
+        "wires": [
+            [
+                "1ef482ff.54be1d"
+            ]
+        ]
+    },
+    {
+        "id": "1ef482ff.54be1d",
+        "type": "file in",
+        "z": "5db3b5bc7f4d1e87",
+        "name": "read a spreadsheet file as binary buffer",
+        "filename": "payload",
+        "filenameType": "msg",
+        "format": "",
+        "chunk": false,
+        "sendError": false,
+        "allProps": false,
+        "x": 540,
+        "y": 220,
+        "wires": [
+            [
+                "58da0822.79c4a8"
+            ]
+        ]
+    },
+    {
+        "id": "58da0822.79c4a8",
+        "type": "book",
+        "z": "5db3b5bc7f4d1e87",
+        "name": "",
+        "x": 440,
+        "y": 280,
+        "wires": [
+            [
+                "8bd99783.125c38",
+                "ed8b8fb2.0d17c"
+            ]
+        ]
+    },
+    {
+        "id": "ed8b8fb2.0d17c",
+        "type": "sheet",
+        "z": "5db3b5bc7f4d1e87",
+        "name": "",
+        "sheetName": "Sheet10",
+        "x": 440,
+        "y": 340,
+        "wires": [
+            [
+                "f0303664.0d9938",
+                "9c0ed110.bc235",
+                "fe9e8ba9.f59db8"
+            ]
+        ]
+    },
+    {
+        "id": "f0303664.0d9938",
+        "type": "cell",
+        "z": "5db3b5bc7f4d1e87",
+        "name": "",
+        "address": "A1",
+        "dataType": "w",
+        "x": 600,
+        "y": 400,
+        "wires": [
+            [
+                "99f7011e.3ecda"
+            ]
+        ]
+    },
+    {
+        "id": "9c0ed110.bc235",
+        "type": "sheet-to-json",
+        "z": "5db3b5bc7f4d1e87",
+        "name": "",
+        "raw": "false",
+        "range": "A4:K154",
+        "header": "default",
+        "blankrows": false,
+        "x": 290,
+        "y": 540,
+        "wires": [
+            [
+                "4c28547e.6d566c",
+                "3d99d42108f69b06"
+            ]
+        ]
+    },
+    {
+        "id": "8bd99783.125c38",
+        "type": "debug",
+        "z": "5db3b5bc7f4d1e87",
+        "name": "",
+        "active": false,
+        "console": "false",
+        "complete": "payload.SheetNames",
+        "x": 770,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "99f7011e.3ecda",
+        "type": "debug",
+        "z": "5db3b5bc7f4d1e87",
+        "name": "",
+        "active": false,
+        "console": "false",
+        "complete": "false",
+        "x": 820,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "4c28547e.6d566c",
+        "type": "debug",
+        "z": "5db3b5bc7f4d1e87",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 820,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "fe9e8ba9.f59db8",
+        "type": "debug",
+        "z": "5db3b5bc7f4d1e87",
+        "name": "",
+        "active": false,
+        "console": "false",
+        "complete": "false",
+        "x": 820,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "3d99d42108f69b06",
+        "type": "python-function",
+        "z": "5db3b5bc7f4d1e87",
+        "name": "",
+        "func": "import pandas as pd\nimport json\ndf = pd.read_json(json.dumps(msg['payload']))\n#df['Group Item'] = df['Group Item'].fillna(method='ffill')\n#filtered_df = df[df['Order'].notna()]\n\njson_list = [row.dropna().to_dict() for _, row in df.iterrows()]\n#t = df.to_json()\nmsg['payload']=json_list\nreturn msg",
+        "outputs": 1,
+        "x": 440,
+        "y": 620,
+        "wires": [
+            [
+                "ab17966065d91b6b",
+                "1ad72640122a920b",
+                "1e92942fcd374920"
+            ]
+        ]
+    },
+    {
+        "id": "ab17966065d91b6b",
+        "type": "debug",
+        "z": "5db3b5bc7f4d1e87",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 700,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "1ad72640122a920b",
+        "type": "ui_table",
+        "z": "5db3b5bc7f4d1e87",
+        "group": "b734b4bded3048b1",
+        "name": "",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "columns": [],
+        "outputs": 0,
+        "cts": false,
+        "x": 710,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "1e92942fcd374920",
+        "type": "python-function",
+        "z": "5db3b5bc7f4d1e87",
+        "name": "",
+        "func": "import pandas as pd\nimport json\nimport re\ndf = pd.read_json(json.dumps(msg['payload']))\ndf['Group Item'] = df['Group Item'].fillna(method='ffill')\ndf = df[df['Order'].notna()]\ndef extract_temp_info(temp_range):\n    if pd.isnull(temp_range):\n        return None, None\n    \n    # Use regex to extract temperature type and value\n    match = re.match(r\"([a-zA-Z\\s]+) \\(<([-]?[\\d]+)°C\\)\", temp_range)\n    if match:\n        return match.groups()\n    else:\n        return None, None\n\n# Apply the function and create new columns\ndf['Temp Type'], df['Temp Value'] = zip(*df['Temp Range'].apply(extract_temp_info))\njson_list = [row.dropna().to_dict() for _, row in df.iterrows()]\n#t = df.to_json()\nmsg['payload']=json_list\nreturn msg",
+        "outputs": 1,
+        "x": 440,
+        "y": 740,
+        "wires": [
+            [
+                "30336db379020603",
+                "30d15e5d6b0ade36",
+                "9d40b44eaff80f65"
+            ]
+        ]
+    },
+    {
+        "id": "30336db379020603",
+        "type": "debug",
+        "z": "5db3b5bc7f4d1e87",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 740,
+        "y": 740,
+        "wires": []
+    },
+    {
+        "id": "30d15e5d6b0ade36",
+        "type": "ui_table",
+        "z": "5db3b5bc7f4d1e87",
+        "group": "b734b4bded3048b1",
+        "name": "After Process ",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "columns": [],
+        "outputs": 0,
+        "cts": false,
+        "x": 660,
+        "y": 800,
+        "wires": []
+    },
+    {
+        "id": "9d40b44eaff80f65",
+        "type": "python-function",
+        "z": "5db3b5bc7f4d1e87",
+        "name": "Load",
+        "func": "import awswrangler as wr\nimport pandas as pd \nimport boto3\nboto3.setup_default_session(region_name='us-east-1')\n\ndf = pd.read_json(json.dumps(msg['payload']))\nwr.s3.to_parquet(\n    df=df,\n    path='s3://<****>-us-east-1-g-test/Tables/met1',\n    dataset=True,\n    mode=\"overwrite\",\n    database=\"gtest\",\n    table='met1'\n)\nreturn msg",
+        "outputs": 1,
+        "x": 410,
+        "y": 880,
+        "wires": [
+            [
+                "e1fb4ff1d15d8508"
+            ]
+        ]
+    },
+    {
+        "id": "e1fb4ff1d15d8508",
+        "type": "debug",
+        "z": "5db3b5bc7f4d1e87",
+        "name": "debug 3",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 560,
+        "y": 900,
+        "wires": []
+    },
+    {
+        "id": "b734b4bded3048b1",
+        "type": "ui_group",
+        "name": "G1",
+        "tab": "7d4ea7cb237d7a45",
+        "order": 1,
+        "disp": true,
+        "width": "27",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "7d4ea7cb237d7a45",
+        "type": "ui_tab",
+        "name": "Data Explorer",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    }
+]
