@@ -1,0 +1,44 @@
+# Use the official Node.js runtime on Bullseye as a parent image
+FROM python:3.8.11-bullseye
+RUN pip install awswrangler
+RUN pip install awswrangler[opensearch]
+RUN pip install openai
+RUN ln -sf python3 /usr/bin/python
+
+# Install curl, dirmngr, and gnupg to enable adding the Node.js PPA
+RUN apt-get update && \
+    apt-get install -y curl dirmngr gnupg && \
+    rm -rf /var/lib/apt/lists/*
+
+# Add the Node.js PPA
+RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
+
+# Install Node.js and npm
+RUN apt-get install -y nodejs
+
+
+
+# Set the working directory to /app
+WORKDIR /app
+
+COPY . .
+
+
+USER root
+# Copy package.json and package-lock.json to the working directory
+
+# Install Node-RED and its dependencies
+RUN npm install -g --unsafe-perm node-red
+RUN npm install -g node-red-dashboard 
+RUN npm install -g node-red-contrib-ui-svg
+RUN npm install -g node-red-contrib-ui-upload 
+RUN npm install -g node-red-contrib-spreadsheet-in
+RUN npm install -g node-red-contrib-chunks-to-lines
+RUN npm install -g node-red-node-mysql
+RUN npm install -g node-red-contrib-spreadsheet-in
+RUN npm install -g node-red-node-ui-table
+# Expose port 1880 for Node-RED
+
+# Set the default command to start Node-RED
+EXPOSE 1880
+CMD ["node-red"]
