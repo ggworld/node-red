@@ -37,6 +37,7 @@ RUN npm install -g node-red-contrib-chunks-to-lines
 RUN npm install -g node-red-node-mysql
 RUN npm install -g node-red-contrib-spreadsheet-in
 RUN npm install -g node-red-node-ui-table
+RUN npm install -g node-red-contrib-python-function
 # Expose port 1880 for Node-RED
 
 # Set the default command to start Node-RED
